@@ -1,0 +1,59 @@
+{
+  "posts": [
+    {
+      "id": 1,
+      "title": "Lorem Ipsum",
+      "author": "Hello_World",
+      "date": "2023-12-31",
+      "content": "sibal rama",
+      "views": 0,
+      "comments": [
+        {
+          "id": 1,
+          "author": "dragonis132",
+          "content": "sibal rama thatgeul x1"
+        },
+        {
+          "id": 2,
+          "author": "six_standard",
+          "content": "sibal rama thatgeul x2"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Data By DB",
+      "author": "Six_Standard",
+      "date": "2024-01-01",
+      "content": "datas",
+      "views": 1,
+      "comments": []
+    },
+    {
+      "id": 3,
+      "title": "Data By DB",
+      "author": "Six_Standard",
+      "date": "2024-01-01",
+      "content": "datas",
+      "views": 1,
+      "comments": []
+    },
+    {
+      "id": 4,
+      "title": "Data By DB",
+      "author": "Six_Standard",
+      "date": "2024-01-01",
+      "content": "datas",
+      "views": 1,
+      "comments": []
+    }
+  ],
+  "users": [
+    {
+      "email": "dbrrlwns1127@gmail.com",
+      "password": "$2a$10$w/U0fr3xKUjXdoAT4thPi.GAJNpa5g1q9rXNXFl3A.9mcSdKz.ISa",
+      "name": "six_standard",
+      "id": 1
+    }
+  ]
+}
