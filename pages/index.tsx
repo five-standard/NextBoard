@@ -6,6 +6,11 @@ import {
   dehydrate,
 } from "@tanstack/react-query";
 import { getPosts } from "@/pages/api/index";
+import { DehydratedState } from "react-query";
+
+interface HomeType {
+  dehydratedState: DehydratedState;
+}
 
 export async function getServerSideProps() {
   const queryClient = new QueryClient();
@@ -22,7 +27,7 @@ export async function getServerSideProps() {
   };
 }
 
-function Posts() {
+function Posts(): JSX.Element {
   const { data } = useQuery({ queryKey: ["posts"], queryFn: getPosts });
 
   return (
@@ -61,7 +66,7 @@ function Posts() {
   );
 }
 
-export default function Home({ dehydratedState }: any) {
+export default function Home({ dehydratedState }: HomeType): JSX.Element {
   return (
     <HydrationBoundary state={dehydratedState}>
       <Posts />

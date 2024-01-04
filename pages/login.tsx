@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import { setCookie } from "cookies-next";
 import useUserInfo from "@/hooks/useUserInfo";
 
-const Login = () => {
+const Login = (): JSX.Element => {
   const [data, setData] = useState({
     email: "",
     password: "",
@@ -32,8 +32,8 @@ const Login = () => {
       setCookie("name", data.user.name);
       setInfo({
         token: data.accessToken,
-        name: data.user.name
-      })
+        name: data.user.name,
+      });
       router.push("/");
     },
   });
@@ -68,13 +68,6 @@ const Login = () => {
               className="text-gray-400 transition-all hover:text-gray-500"
             >
               회원가입
-            </Link>
-            <h1>┃</h1>
-            <Link
-              href="/find"
-              className="text-gray-400 transition-all hover:text-gray-500"
-            >
-              계정 찾기
             </Link>
           </div>
         </div>
