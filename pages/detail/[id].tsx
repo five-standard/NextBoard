@@ -1,24 +1,46 @@
-import { useQuery } from "@tanstack/react-query";
+import {
+  HydrationBoundary,
+  useQuery,
+  dehydrate,
+  QueryClient,
+} from "@tanstack/react-query";
 import { getPost, patchViews } from "../api";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import { useQueryClient } from "@tanstack/react-query";
+import { useEffect } from "react";
+import { DehydratedState } from "react-query";
 
-const Detail = () => {
+interface DetailType {
+  dehydratedState: DehydratedState;
+}
+
+export async function getServerSideProps(context: any) {
+  const queryClient = new QueryClient();
+  const { params } = context;
+
+  await queryClient.prefetchQuery({
+    queryKey: ["post", params.id],
+    queryFn: () => getPost(params.id),
+  });
+
+  return {
+    props: {
+      dehydratedState: dehydrate(queryClient),
+    },
+  };
+}
+
+function DetailComponent() {
   const router = useRouter();
   const { id } = router.query;
 
   const { data } = useQuery({
     queryKey: ["post", id],
     queryFn: () => getPost(id as unknown as string),
-    select: (res) => {
-      return res.data;
-    },
   });
 
   useEffect(() => {
-    data && patchViews(id as unknown as string, data.views);
-  }, [data]);
+    patchViews(id as unknown as string, data.views);
+  });
 
   return (
     <div className="flex w-full justify-center">
@@ -43,7 +65,7 @@ const Detail = () => {
           <ul>
             {data?.comments.map((i: any) => {
               return (
-                <li>
+                <li key={i.id}>
                   <span className="font-bold">{i.author}</span> - {i.content}
                 </li>
               );
@@ -52,6 +74,14 @@ const Detail = () => {
         </div>
       </div>
     </div>
+  );
+}
+
+const Detail = ({ dehydratedState }: DetailType) => {
+  return (
+    <HydrationBoundary state={dehydratedState}>
+      <DetailComponent />
+    </HydrationBoundary>
   );
 };
 
