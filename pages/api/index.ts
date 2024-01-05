@@ -11,7 +11,9 @@ export const postLogin = async (data: any) => {
 };
 
 export const getPost = async (id: string) => {
-  return await axios.get(`http://localhost:8080/posts/${id}`);
+  const res = await axios.get(`http://localhost:8080/posts/${id}`);
+  const { data } = res;
+  return data;
 };
 
 export const postPost = async (data: any) => {
