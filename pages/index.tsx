@@ -7,6 +7,7 @@ import {
 } from "@tanstack/react-query";
 import { getPosts } from "@/pages/api/index";
 import { DehydratedState } from "react-query";
+import useSearchData from "@/hooks/useSearchData";
 
 interface HomeType {
   dehydratedState: DehydratedState;
@@ -17,7 +18,7 @@ export async function getServerSideProps() {
 
   await queryClient.prefetchQuery({
     queryKey: ["posts"],
-    queryFn: getPosts,
+    queryFn: () => getPosts(""),
   });
 
   return {
@@ -28,7 +29,11 @@ export async function getServerSideProps() {
 }
 
 function Posts(): JSX.Element {
-  const { data } = useQuery({ queryKey: ["posts"], queryFn: getPosts });
+  const { data: searchData } = useSearchData();
+  const { data } = useQuery({
+    queryKey: ["posts", searchData],
+    queryFn: () => getPosts(searchData),
+  });
 
   return (
     <div className="flex w-full justify-center">

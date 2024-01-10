@@ -1,15 +1,28 @@
-// "use client";
 import { deleteCookie } from "cookies-next";
 import useUserInfo from "@/hooks/useUserInfo";
 import Link from "next/link";
+import useSearchData from "../hooks/useSearchData";
+import React, { HTMLInputTypeAttribute } from "react";
 
 export const Header = () => {
   const { info, delInfo } = useUserInfo();
+  const { data, setData } = useSearchData();
+  let timer: any;
 
   const handleLogout = () => {
     deleteCookie("accessToken");
     deleteCookie("name");
     delInfo();
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let { value } = e.currentTarget;
+    if (timer) {
+      clearTimeout(timer);
+    }
+    timer = setTimeout(() => {
+      setData(value);
+    }, 200);
   };
 
   return (
@@ -19,6 +32,7 @@ export const Header = () => {
         {info.token && <Link href="/write">Write</Link>}
         <input
           placeholder="Search"
+          onChange={handleChange}
           className="w-[3.8rem] h-5 rounded-md p-2 border-spacing-0 outline-0 text-sm transition-all ease-in-out duration-300 focus:w-60 placeholder:text-sm"
         />
       </div>

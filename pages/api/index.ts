@@ -1,7 +1,11 @@
 import axios from "axios";
 
-export const getPosts = async () => {
-  const res = await axios.get("http://localhost:8080/posts");
+export const getPosts = async (search: string) => {
+  const res = await axios.get(
+    search === ""
+      ? "http://localhost:8080/posts"
+      : `http://localhost:8080/posts?q=${search}`,
+  );
   const { data } = res;
   return data;
 };
@@ -26,7 +30,7 @@ export const patchViews = async (id: string, before: number) => {
   });
 };
 
-export const patchComments = async (comment: any) => {
+export const patchComments = async (comment: any, id: any) => {
   return await axios.patch(`http://localhost:8080/posts/${id}`, {
     comments: comment,
   });
