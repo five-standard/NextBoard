@@ -3,23 +3,29 @@ import {
   useQuery,
   dehydrate,
   QueryClient,
+  DehydratedState,
+  useMutation,
 } from "@tanstack/react-query";
-import { getPost, patchViews } from "../api";
+import { getPost, patchComments, patchViews } from "../../../api";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
-import { DehydratedState } from "react-query";
+import { useEffect, useState } from "react";
+import { getCookie } from "cookies-next";
 
 interface DetailType {
   dehydratedState: DehydratedState;
 }
 
+const queryClient = new QueryClient();
+
 export async function getServerSideProps(context: any) {
-  const queryClient = new QueryClient();
   const { params } = context;
+  const { id, views } = params;
+
+  patchViews(id as unknown as string, Number(views));
 
   await queryClient.prefetchQuery({
-    queryKey: ["post", params.id],
-    queryFn: () => getPost(params.id),
+    queryKey: ["post", id],
+    queryFn: () => getPost(id),
   });
 
   return {
@@ -32,15 +38,44 @@ export async function getServerSideProps(context: any) {
 function DetailComponent() {
   const router = useRouter();
   const { id } = router.query;
+  const [comment, setComment] = useState("");
 
-  const { data } = useQuery({
+  const { data, refetch } = useQuery({
     queryKey: ["post", id],
     queryFn: () => getPost(id as unknown as string),
   });
 
-  useEffect(() => {
-    patchViews(id as unknown as string, data.views);
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setComment(e.currentTarget.value);
+  };
+
+  const { mutate } = useMutation({
+    mutationFn: () =>
+      patchComments(
+        [...data.comments, { author: getCookie("name"), content: comment }],
+        id,
+      ),
+
+    onError: (error, variable, rollback) => {
+      console.log(error);
+    },
+    onSettled: () => {
+      refetch();
+    },
   });
+
+  const handleSubmit = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.shiftKey && e.code === "Enter") {
+      if (!getCookie("accessToken")) {
+        alert("로그인이 필요합니다");
+        router.push("/login");
+        return;
+      }
+      e.preventDefault();
+      mutate();
+      e.currentTarget.value = "";
+    }
+  };
 
   return (
     <div className="flex w-full justify-center">
@@ -49,7 +84,7 @@ function DetailComponent() {
           <div className="flex flex-col gap-2">
             <h1 className="text-4xl font-bold">{data?.title}</h1>
             <h2 className="text-lg">
-              {data?.author}┃{data?.date}┃조회 {data?.views + 1}
+              {data?.author}┃{data?.date}┃조회 {data?.views}
             </h2>
             <hr className="border-gray-600 border-[1px]" />
           </div>
@@ -61,11 +96,13 @@ function DetailComponent() {
             rows={3}
             placeholder="Comments"
             className="border-gray-950 p-1.5 box-border rounded-md border-2 resize-none"
+            onChange={handleChange}
+            onKeyDown={handleSubmit}
           />
           <ul>
-            {data?.comments.map((i: any) => {
+            {data?.comments.map((i: any, j: number) => {
               return (
-                <li key={i.id}>
+                <li className="whitespace-pre-wrap break-words" key={j}>
                   <span className="font-bold">{i.author}</span> - {i.content}
                 </li>
               );
