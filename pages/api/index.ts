@@ -14,6 +14,10 @@ export const postLogin = async (data: any) => {
   return await axios.post("http://localhost:8080/login", data);
 };
 
+export const postRegister = async (data: any) => {
+  return await axios.post("http://localhost:8080/register", data);
+};
+
 export const getPost = async (id: string) => {
   const res = await axios.get(`http://localhost:8080/posts/${id}`);
   const { data } = res;
