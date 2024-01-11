@@ -11,7 +11,7 @@ type Props = {
 export const PostData = ({ title, author, date, views, id }: Props) => {
   return (
     <Link
-      href={`/detail/${id}`}
+      href={`/detail/${id}/${views}`}
       className="grid grid-cols-[70fr_30fr] w-full p-2 border-t-[0.5px] border-b-[0.5px] border-gray-950 cursor-pointer"
     >
       {title}
