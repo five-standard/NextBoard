@@ -64,7 +64,7 @@ const Login = (): JSX.Element => {
           </button>
           <div className="flex self-center">
             <Link
-              href="/signup"
+              href="/register"
               className="text-gray-400 transition-all hover:text-gray-500"
             >
               회원가입
